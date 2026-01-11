@@ -4,6 +4,10 @@ A Warhammer 40K Adeptus Mechanicus-themed tracker for the 10 Sacred Rites of AI 
 
 *"The flesh is weak. The machine is strong."*
 
+> **Want to see how this was built?** Check out the [Build Log](./BUILD-LOG.md) for the full process - including the prompts used, design evolution, and iterative feedback that shaped the final product.
+
+---
+
 ## Features
 
 - **10 Sacred Rites** - Compact grid view with individual progress tracking
