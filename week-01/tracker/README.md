@@ -10,18 +10,84 @@ A Warhammer 40K Adeptus Mechanicus-themed tracker for the 10 Sacred Rites of AI 
 - **Cogitator Records** - Notes field for each rite
 - **Sacred Metrics** - 5-cog rating system (Outcome, Efficiency, Reproducibility)
 - **Path to Enlightenment** - Overall sanctification progress
+- **Machine Spirit Dialogs** - Typewriter-style messages with digital click sounds
+- **Dual Mode** - Authenticated mode (saves progress) or Demo mode (no persistence)
 - **Mobile-First Design** - Bottom navigation, touch-friendly
 - **PWA Support** - Install as app on iOS/Android/Desktop
-- **Basic Authentication** - Secure access via middleware
 
-## Design
+## The Build Story
 
-Inspired by the Adeptus Mechanicus of Warhammer 40K:
-- Phosphor green terminal aesthetic
-- Gothic Cinzel headers + Share Tech Mono data
-- CRT scanlines and noise textures
-- Cog motifs and tech-priest iconography
-- Grimdark machine cult language
+This project was built entirely with Claude Code over a single session. Here's how it came together and the challenges along the way.
+
+### Design Direction: Adeptus Mechanicus Aesthetic
+
+The brief was to build a "motivating and fun" resolution tracker. Rather than a generic productivity app, I went with a Warhammer 40K Adeptus Mechanicus theme - the machine-worshipping tech-priests of the 41st millennium.
+
+**Key design choices:**
+- **Phosphor green** (`#39ff14`) as the primary color, evoking old CRT terminals and cogitator screens
+- **Amber-red** (`#ff4a1c`) for callouts and warnings - initially orange, but adjusted to be "more red" for better contrast
+- **Cinzel font** for headers (gothic, ecclesiastical feel) paired with **Share Tech Mono** for data
+- **CRT effects** - scanlines, noise textures, and subtle glow effects
+- Dark background with metallic plate styling for cards
+
+### Machine Spirit Dialog System
+
+Originally attempted to integrate ElevenLabs voice synthesis for a "Machine Spirit" that would speak to the user. After experimenting with voice parameters (trying to get a "dark, low, bassy, scratchy" voice), I pivoted to a text-based system instead.
+
+The final implementation:
+- Typewriter effect with character-by-character animation
+- **Web Audio API** for synthetic digital click sounds (no audio files needed)
+- Sounds generated procedurally: square wave + triangle wave through a bandpass filter
+- Click sound tuning took several iterations - started too low/long, then too high, finally settled on 400-500Hz at 10ms
+
+```typescript
+// The click generator creates sounds on-the-fly
+osc.type = "square";
+osc.frequency.setValueAtTime(400 + Math.random() * 100, now);
+```
+
+### Splash Screen & Audio Permissions
+
+Browsers block audio playback until user interaction. The solution: a splash screen that serves double duty:
+1. Enables audio context on first click
+2. Lets users choose between authenticated mode (saves data) or demo mode
+
+### Authentication & Demo Mode
+
+Implemented a dual-mode system:
+- **Authenticated mode**: Basic auth via browser's built-in dialog, progress saved to localStorage
+- **Demo mode**: Full app functionality without persistence - great for trying it out
+
+**The data loss bug**: Early implementation had a subtle bug where the save logic ran in "splash" mode because it checked `!isDemo` instead of `mode === "authenticated"`. This overwrote localStorage with initial data when visiting the splash screen. Fixed by explicitly checking for authenticated mode before saving.
+
+**Splash screen behavior**: Users wanted the splash to show on *every* visit, not just the first. The cookie tracks auth vs demo for persistence purposes, but a query parameter (`?session=start`) controls whether to skip the splash after successful auth/demo selection.
+
+### Card Layout Challenges
+
+The rite cards went through several iterations:
+1. **Initial problem**: Titles getting cut off with `line-clamp-2`
+2. **First fix**: Removed line clamp, but cards had unequal heights
+3. **Final solution**: CSS Grid with `auto-rows-fr` for equal-height rows, flexbox inside cards with `flex-grow` on titles
+
+```css
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+auto-rows-fr; /* All rows same height */
+```
+
+### What Didn't Work
+
+- **SVG Aquila graphics**: Attempted to add Adeptus Mechanicus eagle iconography, but the generated SVGs looked bad. Removed in favor of simple cog emoji (`⚙`).
+- **ElevenLabs voice**: The API worked, but getting the right voice character proved difficult. Text-based Machine Spirit ended up being more atmospheric anyway.
+
+## Tech Stack
+
+- **Next.js 16** (App Router) with Turbopack
+- **TypeScript**
+- **Tailwind CSS 4**
+- **Framer Motion** for animations
+- **Web Audio API** for procedural sound generation
+- **localStorage** for state persistence
+- **Basic Auth** via Next.js middleware
 
 ## Local Development
 
@@ -46,53 +112,25 @@ BASIC_AUTH_PASSWORD=your_secure_password
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) and enter your credentials.
-
-## Generating Icons
-
-If you modify `public/icon.svg`, regenerate the PNG icons:
-```bash
-node scripts/generate-icons.mjs
-```
+5. Open [http://localhost:3000](http://localhost:3000)
 
 ## Deploy to Vercel
 
-### Option 1: Vercel CLI
-
-```bash
-npm i -g vercel
-vercel login
-cd week-01/tracker
-vercel
-```
-
-### Option 2: GitHub Integration
-
-1. Push repo to GitHub
-2. Import at [vercel.com](https://vercel.com)
-3. Set **Root Directory** to `week-01/tracker`
-4. Add environment variables:
-   - `BASIC_AUTH_USER` = your username
-   - `BASIC_AUTH_PASSWORD` = strong password
-5. Deploy
+1. Import repo at [vercel.com](https://vercel.com)
+2. Set **Root Directory** to `week-01/tracker`
+3. Add environment variables:
+   - `BASIC_AUTH_USER`
+   - `BASIC_AUTH_PASSWORD`
+4. Deploy
 
 ## Security Notes
 
 - Never commit `.env.local` or real credentials
-- `.env.example` shows required variables with placeholders
 - Set production credentials via Vercel dashboard only
-- Basic auth transmitted over HTTPS
-
-## Tech Stack
-
-- Next.js 16 (App Router)
-- TypeScript
-- Tailwind CSS 4
-- Framer Motion
-- localStorage persistence
+- Basic auth is transmitted over HTTPS
 
 ---
 
-*Part of the AI Resolution 2026 project - Rite I: The Rite of First Forging*
+*Part of the [AI Resolution 2026](../../README.md) project - Rite I: The Rite of First Forging*
 
 *The Omnissiah protects.*
