@@ -1,0 +1,503 @@
+@import "tailwindcss";
+
+:root {
+  /* Adeptus Mechanicus / Machine God Palette */
+  --background: #0a0a0a;
+  --surface: #0f0f0f;
+  --surface-elevated: #1a1a1a;
+  --border: #2a2a2a;
+
+  /* Sacred Phosphor Green */
+  --phosphor: #39ff14;
+  --phosphor-dim: #1a8f0a;
+  --phosphor-glow: #00ff41;
+
+  /* Sacred Amber-Red - for callouts and blessings */
+  --amber: #ff4a1c;
+  --amber-dim: #cc3a16;
+  --amber-glow: rgba(255, 74, 28, 0.6);
+
+  /* Holy Rust & Bronze */
+  --rust: #8b4513;
+  --bronze: #cd7f32;
+  --copper: #b87333;
+
+  /* Warning Red */
+  --warning: #ff3333;
+  --warning-dim: #661111;
+
+  /* Text */
+  --foreground: #c0c0c0;
+  --foreground-bright: #e0e0e0;
+  --foreground-dim: #606060;
+
+  /* Fonts */
+  --font-display: var(--font-cinzel);
+  --font-mono: var(--font-share-tech);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-border: var(--border);
+  --color-phosphor: var(--phosphor);
+  --color-phosphor-dim: var(--phosphor-dim);
+  --color-phosphor-glow: var(--phosphor-glow);
+  --color-amber: var(--amber);
+  --color-amber-dim: var(--amber-dim);
+  --color-amber-glow: var(--amber-glow);
+  --color-rust: var(--rust);
+  --color-bronze: var(--bronze);
+  --color-copper: var(--copper);
+  --color-warning: var(--warning);
+  --color-warning-dim: var(--warning-dim);
+  --color-foreground: var(--foreground);
+  --color-foreground-bright: var(--foreground-bright);
+  --color-foreground-dim: var(--foreground-dim);
+  --font-sans: var(--font-share-tech);
+  --font-mono: var(--font-share-tech);
+}
+
+/* Phosphor glow animation */
+@keyframes phosphor-pulse {
+  0%, 100% {
+    text-shadow: 0 0 5px var(--phosphor), 0 0 10px var(--phosphor-dim);
+    box-shadow: 0 0 5px var(--phosphor), 0 0 10px var(--phosphor-dim);
+  }
+  50% {
+    text-shadow: 0 0 10px var(--phosphor), 0 0 20px var(--phosphor-dim), 0 0 30px var(--phosphor-dim);
+    box-shadow: 0 0 10px var(--phosphor), 0 0 20px var(--phosphor-dim);
+  }
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.8; }
+  94% { opacity: 1; }
+  97% { opacity: 0.9; }
+  98% { opacity: 1; }
+}
+
+@keyframes cog-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), monospace;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* CRT scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Noise/grain texture */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Phosphor text glow */
+.phosphor-text {
+  color: var(--phosphor);
+  text-shadow: 0 0 5px var(--phosphor), 0 0 10px var(--phosphor-dim);
+}
+
+.phosphor-glow {
+  animation: phosphor-pulse 3s ease-in-out infinite;
+}
+
+/* Gothic border with cog corners */
+.gothic-border {
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.gothic-border::before,
+.gothic-border::after {
+  content: '⚙';
+  position: absolute;
+  font-size: 10px;
+  color: var(--phosphor-dim);
+  opacity: 0.6;
+}
+
+.gothic-border::before {
+  top: -6px;
+  left: -6px;
+}
+
+.gothic-border::after {
+  bottom: -6px;
+  right: -6px;
+}
+
+/* Metal plate effect */
+.metal-plate {
+  background: linear-gradient(
+    135deg,
+    var(--surface) 0%,
+    var(--surface-elevated) 50%,
+    var(--surface) 100%
+  );
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+
+/* Hazard stripe accent */
+.hazard-stripe {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--warning-dim),
+    var(--warning-dim) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+/* Progress bar - sacred sanctification */
+.sanctification-bar {
+  background: var(--surface);
+  border: 1px solid var(--phosphor-dim);
+  overflow: hidden;
+  position: relative;
+}
+
+.sanctification-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 4px,
+    rgba(0,0,0,0.3) 4px,
+    rgba(0,0,0,0.3) 5px
+  );
+  pointer-events: none;
+}
+
+.sanctification-fill {
+  background: linear-gradient(
+    90deg,
+    var(--phosphor-dim) 0%,
+    var(--phosphor) 100%
+  );
+  box-shadow: 0 0 10px var(--phosphor-dim);
+  transition: width 0.5s ease-out;
+}
+
+/* Mission card */
+.rite-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.rite-card:hover {
+  border-color: var(--amber-dim);
+  box-shadow: 0 0 15px var(--amber-glow);
+}
+
+.rite-card.sanctified {
+  border-color: var(--phosphor);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+.rite-card.sanctified::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--phosphor), transparent);
+}
+
+/* Pending rite number accent */
+.rite-card:not(.sanctified) .rite-number {
+  color: var(--amber);
+  text-shadow: 0 0 5px var(--amber-glow);
+}
+
+/* Checkbox - binary toggle */
+.binary-toggle {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--phosphor-dim);
+  background: var(--background);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.binary-toggle:hover {
+  border-color: var(--phosphor);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+.binary-toggle:checked {
+  background: var(--phosphor);
+  border-color: var(--phosphor);
+  box-shadow: 0 0 10px var(--phosphor-dim);
+}
+
+.binary-toggle:checked::after {
+  content: '1';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--background);
+  font-size: 12px;
+  font-weight: bold;
+  font-family: var(--font-mono);
+}
+
+/* Textarea - data log */
+.data-log {
+  background: var(--background);
+  border: 1px solid var(--phosphor-dim);
+  color: var(--phosphor);
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  padding: 12px;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.data-log:focus {
+  outline: none;
+  border-color: var(--phosphor);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+.data-log::placeholder {
+  color: var(--phosphor-dim);
+  opacity: 0.5;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--phosphor-dim);
+  border: 1px solid var(--background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--phosphor);
+}
+
+/* Bottom nav for mobile */
+.bottom-nav {
+  background: var(--surface);
+  border-top: 1px solid var(--phosphor-dim);
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.bottom-nav-item {
+  color: var(--foreground-dim);
+  transition: all 0.2s ease;
+}
+
+.bottom-nav-item.active {
+  color: var(--phosphor);
+  text-shadow: 0 0 10px var(--phosphor-dim);
+}
+
+/* Top header bar */
+.top-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--phosphor-dim);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Slide-out panel */
+.slide-panel {
+  background: var(--surface);
+  border-right: 1px solid var(--phosphor-dim);
+  box-shadow: 5px 0 30px rgba(0, 0, 0, 0.8);
+}
+
+/* PWA install banner */
+.install-banner {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-elevated) 100%);
+  border: 1px solid var(--phosphor-dim);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+}
+
+/* Star rating - amber for filled */
+.star-rating {
+  color: var(--foreground-dim);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.star-rating:hover {
+  transform: scale(1.2);
+  color: var(--amber);
+}
+
+.star-rating.filled {
+  color: var(--amber);
+  text-shadow: 0 0 5px var(--amber-glow);
+}
+
+/* Safe area for mobile */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Machine Spirit Dialog */
+.machine-spirit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.machine-spirit-dialog {
+  background: var(--background);
+  border: 2px solid var(--phosphor-dim);
+  max-width: 600px;
+  width: 100%;
+  padding: 24px 32px;
+  position: relative;
+  box-shadow:
+    0 0 30px rgba(57, 255, 20, 0.2),
+    inset 0 0 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Corner decorations like the game UI */
+.machine-spirit-dialog::before,
+.machine-spirit-dialog::after {
+  content: '+';
+  position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--amber);
+  text-shadow: 0 0 10px var(--amber-glow);
+}
+
+.machine-spirit-dialog::before {
+  top: -12px;
+  left: -12px;
+}
+
+.machine-spirit-dialog::after {
+  bottom: -12px;
+  right: -12px;
+}
+
+/* Header line */
+.machine-spirit-header {
+  color: var(--phosphor-dim);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Amber text for important blessings */
+.amber-text {
+  color: var(--amber);
+  text-shadow: 0 0 8px var(--amber-glow);
+}
+
+/* Typewriter cursor */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 10px;
+  height: 18px;
+  background: var(--phosphor);
+  margin-left: 2px;
+  animation: blink-cursor 0.8s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+.typewriter-cursor.amber {
+  background: var(--amber);
+}
+
+/* Machine Spirit text lines */
+.spirit-line {
+  font-family: var(--font-mono), monospace;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 12px;
+  min-height: 28px;
+}
+
+.spirit-line.green {
+  color: var(--phosphor);
+  text-shadow: 0 0 5px var(--phosphor-dim);
+}
+
+.spirit-line.amber {
+  color: var(--amber);
+  text-shadow: 0 0 8px var(--amber-glow);
+}

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0a0a0a"/>
+  <g fill="none" stroke="#39ff14" stroke-width="12">
+    <!-- Outer cog teeth -->
+    <path d="M256 40 L256 80 M256 432 L256 472"/>
+    <path d="M40 256 L80 256 M432 256 L472 256"/>
+    <path d="M103 103 L131 131 M381 381 L409 409"/>
+    <path d="M409 103 L381 131 M131 381 L103 409"/>
+    <path d="M148 55 L165 92 M347 420 L364 457"/>
+    <path d="M364 55 L347 92 M165 420 L148 457"/>
+    <path d="M55 148 L92 165 M420 347 L457 364"/>
+    <path d="M55 364 L92 347 M420 165 L457 148"/>
+    <!-- Main cog circle -->
+    <circle cx="256" cy="256" r="140" stroke-width="20"/>
+    <!-- Inner circle -->
+    <circle cx="256" cy="256" r="80" stroke-width="15"/>
+    <!-- Center dot -->
+    <circle cx="256" cy="256" r="25" fill="#39ff14" stroke="none"/>
+  </g>
+  <!-- Glow effect -->
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
